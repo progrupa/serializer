@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2016 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,7 +150,15 @@ class XmlDeserializationVisitor extends AbstractVisitor
             $namespace = isset($classMetadata->xmlNamespaces[''])?$classMetadata->xmlNamespaces['']:$namespace;
         }
 
-        if ( ! isset($data->$entryName) ) {
+        if (null !== $namespace) {
+            $prefix = uniqid('ns-');
+            $data->registerXPathNamespace($prefix, $namespace);
+            $nodes = $data->xpath("$prefix:$entryName");
+        } else {
+            $nodes = $data->xpath($entryName);
+        }
+
+        if (!count($nodes)) {
             if (null === $this->result) {
                 return $this->result = array();
             }
@@ -169,7 +177,6 @@ class XmlDeserializationVisitor extends AbstractVisitor
                     $this->result = &$result;
                 }
 
-                $nodes = $data->children($namespace)->$entryName;
                 foreach ($nodes as $v) {
                     $result[] = $this->navigator->accept($v, $type['params'][0], $context);
                 }
@@ -227,7 +234,7 @@ class XmlDeserializationVisitor extends AbstractVisitor
             $attributes = $data->attributes($metadata->xmlNamespace);
             if (isset($attributes[$name])) {
                 $v = $this->navigator->accept($attributes[$name], $metadata->type, $context);
-                $metadata->reflection->setValue($this->currentObject, $v);
+                $metadata->setValue($this->currentObject, $v);
             }
 
             return;
@@ -235,7 +242,7 @@ class XmlDeserializationVisitor extends AbstractVisitor
 
         if ($metadata->xmlValue) {
             $v = $this->navigator->accept($data, $metadata->type, $context);
-            $metadata->reflection->setValue($this->currentObject, $v);
+            $metadata->setValue($this->currentObject, $v);
 
             return;
         }
@@ -249,7 +256,7 @@ class XmlDeserializationVisitor extends AbstractVisitor
             $this->setCurrentMetadata($metadata);
             $v = $this->navigator->accept($enclosingElem, $metadata->type, $context);
             $this->revertCurrentMetadata();
-            $metadata->reflection->setValue($this->currentObject, $v);
+            $metadata->setValue($this->currentObject, $v);
 
             return;
         }
@@ -267,16 +274,13 @@ class XmlDeserializationVisitor extends AbstractVisitor
                 $prefix = uniqid('ns-');
                 $data->registerXPathNamespace($prefix, $namespaces['']);
                 $nodes = $data->xpath('./'.$prefix. ':'.$name );
-                if (empty($nodes)) {
-                    return;
-                }
-                $node = reset($nodes);
             } else {
-                if (!isset($data->$name)) {
-                    return;
-                }
-                $node = $data->$name;
+                $nodes = $data->xpath('./'. $name );
             }
+            if (empty($nodes)) {
+                return;
+            }
+            $node = reset($nodes);
         }
 
         $v = $this->navigator->accept($node, $metadata->type, $context);

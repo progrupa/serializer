@@ -7,17 +7,24 @@ XML Reference
     <serializer>
         <class name="Fully\Qualified\ClassName" exclusion-policy="ALL" xml-root-name="foo-bar" exclude="true"
             accessor-order="custom" custom-accessor-order="propertyName1,propertyName2,...,propertyNameN"
-            access-type="public_method" discriminator-field-name="type"  read-only="false">
+            access-type="public_method" discriminator-field-name="type" discriminator-disabled="false" read-only="false">
             <xml-namespace prefix="atom" uri="http://www.w3.org/2005/Atom"/>
+            <xml-discriminator attribute="true" cdata="false"/>
             <discriminator-class value="some-value">ClassName</discriminator-class>
+            <discriminator-groups>
+                <group>foo</group>
+            </discriminator-groups>
             <property name="some-property"
                       exclude="true"
                       expose="true"
+                      exclude-if="expr"
+                      expose-if="expr"
                       type="string"
                       serialized-name="foo"
                       since-version="1.0"
                       until-version="1.1"
                       xml-attribute="true"
+                      xml-value="true"
                       access-type="public_method"
                       accessor-getter="getSomeProperty"
                       accessor-setter="setSomeProperty"

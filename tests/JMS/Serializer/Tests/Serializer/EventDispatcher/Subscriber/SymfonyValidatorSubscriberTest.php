@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2016 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,6 @@ class SymfonyValidatorSubscriberTest extends \PHPUnit_Framework_TestCase
 
     /** @var SymfonyValidatorSubscriber */
     private $subscriber;
-
-    /** @var Context */
-    private $context;
 
     public function testValidate()
     {
@@ -103,6 +100,10 @@ class SymfonyValidatorSubscriberTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        if (!interface_exists('Symfony\Component\Validator\ValidatorInterface')) {
+            $this->markTestSkipped('Symfony\Component\Validator\ValidatorInterface is not available');
+        }
+
         $this->validator = $this->getMock('Symfony\Component\Validator\ValidatorInterface');
         $this->subscriber = new SymfonyValidatorSubscriber($this->validator);
     }

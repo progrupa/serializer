@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2016 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ class YamlDriver extends AbstractFileDriver
 
         if ( ! $excludeAll) {
             foreach ($class->getProperties() as $property) {
-                if ($name !== $property->class) {
+                if ($property->class !== $name || (isset($property->info) && $property->info['class'] !== $name)) {
                     continue;
                 }
 
@@ -96,6 +96,14 @@ class YamlDriver extends AbstractFileDriver
                         $pMetadata->untilVersion = (string) $pConfig['until_version'];
                     }
 
+                    if (isset($pConfig['exclude_if'])) {
+                        $pMetadata->excludeIf = (string) $pConfig['exclude_if'];
+                    }
+
+                    if (isset($pConfig['expose_if'])) {
+                        $pMetadata->excludeIf = "!(" . $pConfig['expose_if'].")";
+                    }
+
                     if (isset($pConfig['serialized_name'])) {
                         $pMetadata->serializedName = (string) $pConfig['serialized_name'];
                     }
@@ -113,11 +121,17 @@ class YamlDriver extends AbstractFileDriver
 
                         $colConfig = $pConfig['xml_list'];
                         if (isset($colConfig['inline'])) {
-                            $pMetadata->xmlCollectionInline = (Boolean) $colConfig['inline'];
+                            $pMetadata->xmlCollectionInline = (Boolean)$colConfig['inline'];
                         }
 
                         if (isset($colConfig['entry_name'])) {
-                            $pMetadata->xmlEntryName = (string) $colConfig['entry_name'];
+                            $pMetadata->xmlEntryName = (string)$colConfig['entry_name'];
+                        }
+
+                        if (isset($colConfig['skip_when_empty'])) {
+                            $pMetadata->xmlCollectionSkipWhenEmpty = (Boolean)$colConfig['skip_when_empty'];
+                        } else {
+                            $pMetadata->xmlCollectionSkipWhenEmpty = true;
                         }
 
                         if (isset($colConfig['namespace'])) {
@@ -203,9 +217,9 @@ class YamlDriver extends AbstractFileDriver
         }
 
         if (isset($config['handler_callbacks'])) {
-            foreach ($config['handler_callbacks'] as $direction => $formats) {
+            foreach ($config['handler_callbacks'] as $directionName => $formats) {
+                $direction = GraphNavigator::parseDirection($directionName);
                 foreach ($formats as $format => $methodName) {
-                    $direction = GraphNavigator::parseDirection($direction);
                     $metadata->addHandlerCallback($direction, $format, $methodName);
                 }
             }
@@ -270,8 +284,18 @@ class YamlDriver extends AbstractFileDriver
                 if ( ! isset($config['discriminator']['map']) || ! is_array($config['discriminator']['map'])) {
                     throw new RuntimeException('The "map" attribute must be set, and be an array for discriminators.');
                 }
+                $groups = isset($config['discriminator']['groups']) ? $config['discriminator']['groups'] : array();
+                $metadata->setDiscriminator($config['discriminator']['field_name'], $config['discriminator']['map'], $groups);
 
-                $metadata->setDiscriminator($config['discriminator']['field_name'], $config['discriminator']['map']);
+                if (isset($config['discriminator']['xml_attribute'])) {
+                    $metadata->xmlDiscriminatorAttribute = (bool) $config['discriminator']['xml_attribute'];
+                }
+                if (isset($config['discriminator']['xml_element'])) {
+                    if (isset($config['discriminator']['xml_element']['cdata'])) {
+                        $metadata->xmlDiscriminatorCData = (bool) $config['discriminator']['xml_element']['cdata'];
+                    }
+                }
+
             }
         }
     }

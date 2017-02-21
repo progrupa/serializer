@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2016 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,12 +67,14 @@ class VirtualPropertyMetadata extends PropertyMetadata
             $this->inline,
             $this->readOnly,
             $this->class,
-            $this->name
+            $this->name,
+            'excludeIf' => $this->excludeIf,
         ));
     }
 
     public function unserialize($str)
     {
+        $unserialized = unserialize($str);
         list(
             $this->sinceVersion,
             $this->untilVersion,
@@ -96,6 +98,10 @@ class VirtualPropertyMetadata extends PropertyMetadata
             $this->readOnly,
             $this->class,
             $this->name
-        ) = unserialize($str);
+        ) = $unserialized;
+
+        if (isset($unserialized['excludeIf'])){
+            $this->excludeIf = $unserialized['excludeIf'];
+        }
     }
 }

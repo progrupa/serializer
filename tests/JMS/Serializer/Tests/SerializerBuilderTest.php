@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2016 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,17 @@
 
 namespace JMS\Serializer\Tests;
 
+use JMS\Serializer\Expression\ExpressionEvaluator;
 use JMS\Serializer\SerializerBuilder;
+use JMS\Serializer\Tests\Fixtures\PersonSecret;
+use Symfony\Component\ExpressionLanguage\ExpressionFunction;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Filesystem\Filesystem;
 use JMS\Serializer\Handler\HandlerRegistry;
 use JMS\Serializer\JsonSerializationVisitor;
 use JMS\Serializer\Naming\CamelCaseNamingStrategy;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\DeserializationContext;
 
 class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -112,6 +118,120 @@ class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
             $this->builder,
             $this->builder->includeInterfaceMetadata(true)
         );
+    }
+
+    public function testSetSerializationContext()
+    {
+        $contextFactoryMock = $this->getMockForAbstractClass('JMS\\Serializer\\ContextFactory\\SerializationContextFactoryInterface');
+        $context = new SerializationContext();
+        $context->setSerializeNull(true);
+
+        $contextFactoryMock
+            ->expects($this->once())
+            ->method('createSerializationContext')
+            ->will($this->returnValue($context))
+        ;
+
+        $this->builder->setSerializationContextFactory($contextFactoryMock);
+
+        $serializer = $this->builder->build();
+
+        $result = $serializer->serialize(array('value' => null), 'json');
+
+        $this->assertEquals('{"value":null}', $result);
+    }
+
+    public function testSetDeserializationContext()
+    {
+        $contextFactoryMock = $this->getMockForAbstractClass('JMS\\Serializer\\ContextFactory\\DeserializationContextFactoryInterface');
+        $context = new DeserializationContext();
+
+        $contextFactoryMock
+            ->expects($this->once())
+            ->method('createDeserializationContext')
+            ->will($this->returnValue($context))
+        ;
+
+        $this->builder->setDeserializationContextFactory($contextFactoryMock);
+
+        $serializer = $this->builder->build();
+
+        $result = $serializer->deserialize('{"value":null}', 'array', 'json');
+
+        $this->assertEquals(array('value' => null), $result);
+    }
+
+    public function testSetCallbackSerializationContextWithSerializeNull()
+    {
+        $this->builder->setSerializationContextFactory(function () {
+            return SerializationContext::create()
+                ->setSerializeNull(true)
+            ;
+        });
+
+        $serializer = $this->builder->build();
+
+        $result = $serializer->serialize(array('value' => null), 'json');
+
+        $this->assertEquals('{"value":null}', $result);
+    }
+
+    public function testSetCallbackSerializationContextWithNotSerializeNull()
+    {
+        $this->builder->setSerializationContextFactory(function () {
+            return SerializationContext::create()
+                ->setSerializeNull(false)
+            ;
+        });
+
+        $serializer = $this->builder->build();
+
+        $result = $serializer->serialize(array('value' => null, 'not_null' => 'ok'), 'json');
+
+        $this->assertEquals('{"not_null":"ok"}', $result);
+    }
+
+    public function expressionFunctionProvider()
+    {
+        return [
+            [
+                new ExpressionFunction('show_data', function () {
+                    return "true";
+                }, function () {
+                    return true;
+                }),
+                '{"name":"mike"}'
+            ],
+            [
+                new ExpressionFunction('show_data', function () {
+                    return "false";
+                }, function () {
+                    return false;
+                }),
+                '{"name":"mike","gender":"f"}'
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider expressionFunctionProvider
+     * @param ExpressionFunction $function
+     * @param $json
+     */
+    public function testExpressionEngine(ExpressionFunction $function, $json)
+    {
+        $language = new ExpressionLanguage();
+        $language->addFunction($function);
+
+        $this->builder->setExpressionEvaluator(new ExpressionEvaluator($language));
+
+        $serializer = $this->builder->build();
+
+        $person = new PersonSecret();
+        $person->gender = 'f';
+        $person->name = 'mike';
+
+        $this->assertEquals($json, $serializer->serialize($person, 'json'));
     }
 
     protected function setUp()

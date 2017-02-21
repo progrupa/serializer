@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2016 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 
 namespace JMS\Serializer;
 
+use Doctrine\Common\Annotations\CachedReader;
+use Doctrine\Common\Cache\FilesystemCache;
 use JMS\Serializer\Builder\DefaultDriverFactory;
 use JMS\Serializer\Builder\DriverFactoryInterface;
 use JMS\Serializer\Handler\PhpCollectionHandler;
@@ -40,12 +42,16 @@ use JMS\Serializer\Construction\ObjectConstructorInterface;
 use JMS\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
 use JMS\Serializer\Naming\CamelCaseNamingStrategy;
 use JMS\Serializer\Naming\PropertyNamingStrategyInterface;
+use JMS\Serializer\ContextFactory\SerializationContextFactoryInterface;
+use JMS\Serializer\ContextFactory\DeserializationContextFactoryInterface;
+use JMS\Serializer\ContextFactory\CallableSerializationContextFactory;
+use JMS\Serializer\ContextFactory\CallableDeserializationContextFactory;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\FileCacheReader;
 use Metadata\Cache\FileCache;
 use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
 use JMS\Serializer\Exception\InvalidArgumentException;
+use JMS\Serializer\Expression\ExpressionEvaluatorInterface;
 
 /**
  * Builder for serializer instances.
@@ -72,6 +78,13 @@ class SerializerBuilder
     private $annotationReader;
     private $includeInterfaceMetadata = false;
     private $driverFactory;
+    private $serializationContextFactory;
+    private $deserializationContextFactory;
+
+    /**
+     * @var ExpressionEvaluatorInterface
+     */
+    private $expressionEvaluator;
 
     public static function create()
     {
@@ -85,6 +98,11 @@ class SerializerBuilder
         $this->driverFactory = new DefaultDriverFactory();
         $this->serializationVisitors = new Map();
         $this->deserializationVisitors = new Map();
+    }
+
+    public function setExpressionEvaluator(ExpressionEvaluatorInterface $expressionEvaluator)
+    {
+        $this->expressionEvaluator = $expressionEvaluator;
     }
 
     public function setAnnotationReader(Reader $reader)
@@ -333,6 +351,46 @@ class SerializerBuilder
         return $this;
     }
 
+    /**
+     * @param SerializationContextFactoryInterface|callable $serializationContextFactory
+     *
+     * @return self
+     */
+    public function setSerializationContextFactory($serializationContextFactory)
+    {
+        if ($serializationContextFactory instanceof SerializationContextFactoryInterface) {
+            $this->serializationContextFactory = $serializationContextFactory;
+        } elseif (is_callable($serializationContextFactory)) {
+            $this->serializationContextFactory = new CallableSerializationContextFactory(
+                $serializationContextFactory
+            );
+        } else {
+            throw new InvalidArgumentException('expected SerializationContextFactoryInterface or callable.');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param DeserializationContextFactoryInterface|callable $deserializationContextFactory
+     *
+     * @return self
+     */
+    public function setDeserializationContextFactory($deserializationContextFactory)
+    {
+        if ($deserializationContextFactory instanceof DeserializationContextFactoryInterface) {
+            $this->deserializationContextFactory = $deserializationContextFactory;
+        } elseif (is_callable($deserializationContextFactory)) {
+            $this->deserializationContextFactory = new CallableDeserializationContextFactory(
+                $deserializationContextFactory
+            );
+        } else {
+            throw new InvalidArgumentException('expected DeserializationContextFactoryInterface or callable.');
+        }
+
+        return $this;
+    }
+
     public function build()
     {
         $annotationReader = $this->annotationReader;
@@ -341,7 +399,8 @@ class SerializerBuilder
 
             if (null !== $this->cacheDir) {
                 $this->createDir($this->cacheDir.'/annotations');
-                $annotationReader = new FileCacheReader($annotationReader, $this->cacheDir.'/annotations', $this->debug);
+                $annotationsCache = new FilesystemCache($this->cacheDir.'/annotations');
+                $annotationReader = new CachedReader($annotationReader, $annotationsCache, $this->debug);
             }
         }
 
@@ -368,14 +427,26 @@ class SerializerBuilder
             $this->addDefaultDeserializationVisitors();
         }
 
-        return new Serializer(
+        $serializer = new Serializer(
             $metadataFactory,
             $this->handlerRegistry,
             $this->objectConstructor ?: new UnserializeObjectConstructor(),
             $this->serializationVisitors,
             $this->deserializationVisitors,
-            $this->eventDispatcher
+            $this->eventDispatcher,
+            null,
+            $this->expressionEvaluator
         );
+
+        if (null !== $this->serializationContextFactory) {
+            $serializer->setSerializationContextFactory($this->serializationContextFactory);
+        }
+
+        if (null !== $this->deserializationContextFactory) {
+            $serializer->setDeserializationContextFactory($this->deserializationContextFactory);
+        }
+
+        return $serializer;
     }
 
     private function initializePropertyNamingStrategy()
