@@ -22,6 +22,7 @@ use JMS\Serializer\GraphNavigator;
 use JMS\Serializer\Exception\RuntimeException;
 use JMS\Serializer\Exception\XmlErrorException;
 use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Metadata\ExpressionPropertyMetadata;
 use JMS\Serializer\Metadata\PropertyMetadata;
 use JMS\Serializer\Metadata\VirtualPropertyMetadata;
 use Metadata\MethodMetadata;
@@ -33,6 +34,8 @@ class XmlDriver extends AbstractFileDriver
     protected function loadMetadataFromFile(\ReflectionClass $class, $path)
     {
         $previous = libxml_use_internal_errors(true);
+        libxml_clear_errors();
+
         $elem = simplexml_load_file($path);
         libxml_use_internal_errors($previous);
 
@@ -114,11 +117,15 @@ class XmlDriver extends AbstractFileDriver
         }
 
         foreach ($elem->xpath('./virtual-property') as $method) {
-            if ( ! isset($method->attributes()->method)) {
-                throw new RuntimeException('The method attribute must be set for all virtual-property elements.');
-            }
 
-            $virtualPropertyMetadata = new VirtualPropertyMetadata($name, (string) $method->attributes()->method);
+            if (isset($method->attributes()->expression)) {
+                $virtualPropertyMetadata = new ExpressionPropertyMetadata($name, (string)$method->attributes()->name, (string)$method->attributes()->expression);
+            } else {
+                if ( ! isset($method->attributes()->method)) {
+                    throw new RuntimeException('The method attribute must be set for all virtual-property elements.');
+                }
+                $virtualPropertyMetadata = new VirtualPropertyMetadata($name, (string) $method->attributes()->method);
+            }
 
             $propertiesMetadata[] = $virtualPropertyMetadata;
             $propertiesNodes[] = $method;

@@ -16,15 +16,27 @@
  * limitations under the License.
  */
 
-namespace JMS\Serializer\Tests\Fixtures;
+namespace JMS\Serializer\Accessor;
 
-use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Metadata\PropertyMetadata;
 
-class ObjectWithEmptyHash
+/**
+ * @author Asmir Mustafic <goetas@gmail.com>
+ */
+interface AccessorStrategyInterface
 {
     /**
-     * @Serializer\Type("array<string,string>")
-     * @Serializer\XmlList(skipWhenEmpty=false)
+     * @param object $object
+     * @param PropertyMetadata $metadata
+     * @return mixed
      */
-    private $hash = array();
+    public function getValue($object, PropertyMetadata $metadata);
+
+    /**
+     * @param object $object
+     * @param mixed $value
+     * @param PropertyMetadata $metadata
+     * @return void
+     */
+    public function setValue($object, $value, PropertyMetadata $metadata);
 }

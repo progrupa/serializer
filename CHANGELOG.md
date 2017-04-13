@@ -1,9 +1,115 @@
 # Change Log
 
+## [1.6.1](https://github.com/schmittjoh/serializer/tree/1.6.1) (2017-04-12)
+**Fixed bugs:**
+
+- Do not output the XML node when the object will be emtpy [\#744](https://github.com/schmittjoh/serializer/pull/744) ([goetas](https://github.com/goetas))
+
+**Closed issues:**
+
+- XmlList not working since version 1.5.0 with xmlns attributes [\#742](https://github.com/schmittjoh/serializer/issues/742)
+- DoctrineObjectConstructor: how to use it without Symfony, in a PHP project [\#741](https://github.com/schmittjoh/serializer/issues/741)
+- Outdated docs site [\#733](https://github.com/schmittjoh/serializer/issues/733)
+- Allow data access to Property naming strategy [\#717](https://github.com/schmittjoh/serializer/issues/717)
+- Can't hint interface using @Type to trigger custom handler [\#631](https://github.com/schmittjoh/serializer/issues/631)
+- JSON/YAML encoding changes [\#617](https://github.com/schmittjoh/serializer/issues/617)
+- Why do we need this check inside SerializedName constructor, if there is name? [\#558](https://github.com/schmittjoh/serializer/issues/558)
+- Is it possible to deserialize Collection from Json [\#534](https://github.com/schmittjoh/serializer/issues/534)
+- PhpCollection 0.4 [\#531](https://github.com/schmittjoh/serializer/issues/531)
+- Possible mismatch of xml-attribute-map and $pMetadata-\>xmlAttribute in XmlDriver.php [\#422](https://github.com/schmittjoh/serializer/issues/422)
+- Access level propose for Handler/DateHandler.php [\#386](https://github.com/schmittjoh/serializer/issues/386)
+- Type DateTime and Timestamp \(U format\) [\#343](https://github.com/schmittjoh/serializer/issues/343)
+
+**Merged pull requests:**
+
+- Update PHPDocs [\#736](https://github.com/schmittjoh/serializer/pull/736) ([gnat42](https://github.com/gnat42))
+
+## [1.6.0](https://github.com/schmittjoh/serializer/tree/1.6.0) (2017-03-24)
+**Implemented enhancements:**
+
+- Add DateTimeImmutable support to DateHandler [\#543](https://github.com/schmittjoh/serializer/issues/543)
+
+**Fixed bugs:**
+
+- Virtual property having type overriden by doctrine metadata [\#276](https://github.com/schmittjoh/serializer/issues/276)
+
+**Closed issues:**
+
+- Serialize a subclass [\#735](https://github.com/schmittjoh/serializer/issues/735)
+- How to handle Doctrine not found entity ? [\#731](https://github.com/schmittjoh/serializer/issues/731)
+- Regression with 1.5.0 =\> Undefined offset 15 [\#715](https://github.com/schmittjoh/serializer/issues/715)
+- detect serialisation without groups set [\#546](https://github.com/schmittjoh/serializer/issues/546)
+- Introducing the NormalizerInterface [\#537](https://github.com/schmittjoh/serializer/issues/537)
+- How to set JSON serialization options? [\#535](https://github.com/schmittjoh/serializer/issues/535)
+- @MaxDepth doesn't seem to be working [\#522](https://github.com/schmittjoh/serializer/issues/522)
+- max\_depth in YML config is ignored [\#498](https://github.com/schmittjoh/serializer/issues/498)
+- Dynamic property type  annotation [\#436](https://github.com/schmittjoh/serializer/issues/436)
+- How to deserialize JSON if property might have a list of subobjects? [\#355](https://github.com/schmittjoh/serializer/issues/355)
+- Object to array normalization [\#354](https://github.com/schmittjoh/serializer/issues/354)
+- Serialize Doctrine object without references [\#353](https://github.com/schmittjoh/serializer/issues/353)
+- Post\_serialize doesn't serialize relation! [\#236](https://github.com/schmittjoh/serializer/issues/236)
+- parsing string to date [\#217](https://github.com/schmittjoh/serializer/issues/217)
+- Discriminator is not exposed when using a group exclusion strategy [\#157](https://github.com/schmittjoh/serializer/issues/157)
+
+## [1.6.0-RC1](https://github.com/schmittjoh/serializer/tree/1.6.0-RC1) (2017-03-14)
+**Implemented enhancements:**
+
+- Add symfony expression in exclusions/expositions [\#406](https://github.com/schmittjoh/serializer/issues/406)
+- check that cache directory was not created before throwing exception [\#729](https://github.com/schmittjoh/serializer/pull/729) ([mente](https://github.com/mente))
+- \#720 - Adding support for DateInterval deserialization [\#721](https://github.com/schmittjoh/serializer/pull/721) ([c0ntax](https://github.com/c0ntax))
+- Expression language based virtual properties [\#708](https://github.com/schmittjoh/serializer/pull/708) ([goetas](https://github.com/goetas))
+- Xml namespaces improvements [\#644](https://github.com/schmittjoh/serializer/pull/644) ([goetas](https://github.com/goetas))
+
+**Fixed bugs:**
+
+- Serialize correctly empty intervals according to ISO-8601 [\#722](https://github.com/schmittjoh/serializer/pull/722) ([goetas](https://github.com/goetas))
+
+**Closed issues:**
+
+- Is it possible to achieve something like - shouldSerializeEmpty  [\#725](https://github.com/schmittjoh/serializer/issues/725)
+- How to handle DateTime serialization with fromArray method ? [\#723](https://github.com/schmittjoh/serializer/issues/723)
+- DateInterval supported for serialization but not deserialization [\#720](https://github.com/schmittjoh/serializer/issues/720)
+- Deserialization of collection when wraped by aditional xml tags [\#719](https://github.com/schmittjoh/serializer/issues/719)
+- SerializedName based on a property value [\#716](https://github.com/schmittjoh/serializer/issues/716)
+- Blank XML breaks XmlDeserializationVisitor error handling [\#701](https://github.com/schmittjoh/serializer/issues/701)
+- Problem with FOSUserBundle ROLE serialization [\#690](https://github.com/schmittjoh/serializer/issues/690)
+- Doctrine cache dependency when using setCacheDir [\#676](https://github.com/schmittjoh/serializer/issues/676)
+- OneToOne entities are not deserialized if passing a nested one-to-one property [\#652](https://github.com/schmittjoh/serializer/issues/652)
+- \[RFC\] Serialization refacotring [\#609](https://github.com/schmittjoh/serializer/issues/609)
+- Object handler callback returns array, but serialized object = null [\#594](https://github.com/schmittjoh/serializer/issues/594)
+- Cannot add @Discriminator field into specific @Group [\#557](https://github.com/schmittjoh/serializer/issues/557)
+- Object check on SerializationContext::isVisiting\(\) [\#502](https://github.com/schmittjoh/serializer/issues/502)
+-  Define cdata and namespace for @XmlList elements [\#480](https://github.com/schmittjoh/serializer/issues/480)
+- Serializer working with parent class [\#376](https://github.com/schmittjoh/serializer/issues/376)
+- Add support for array format [\#374](https://github.com/schmittjoh/serializer/issues/374)
+- Obtain VirtualProperty value using a service [\#359](https://github.com/schmittjoh/serializer/issues/359)
+- make deserialisation of non existing id's configurable [\#333](https://github.com/schmittjoh/serializer/issues/333)
+- HHVM compatibility issue with undefined property JMS\Serializer\Metadata\ClassMetadata::$inline  [\#312](https://github.com/schmittjoh/serializer/issues/312)
+- resources serialization [\#275](https://github.com/schmittjoh/serializer/issues/275)
+- I'm receiving "Class ArrayCollection does not exist" when serializing \(temporarily solved with a workaround\) [\#274](https://github.com/schmittjoh/serializer/issues/274)
+- Can't use handlers on strings \(and other simple types\) [\#194](https://github.com/schmittjoh/serializer/issues/194)
+- composer.json update for doctrine [\#178](https://github.com/schmittjoh/serializer/issues/178)
+- Use expression for virtual properties [\#171](https://github.com/schmittjoh/serializer/issues/171)
+- Handle classes that implement collections \(e.g. ArrayObject\) and properties [\#137](https://github.com/schmittjoh/serializer/issues/137)
+- Check CDATA is needed [\#136](https://github.com/schmittjoh/serializer/issues/136)
+- property path support [\#22](https://github.com/schmittjoh/serializer/issues/22)
+
+**Merged pull requests:**
+
+- Include reference to cache [\#727](https://github.com/schmittjoh/serializer/pull/727) ([hyperized](https://github.com/hyperized))
+
+## [1.5.0](https://github.com/schmittjoh/serializer/tree/1.5.0) (2017-02-14)
+**Closed issues:**
+
+- Serialized DateTime instances are not valid ISO-8601 [\#713](https://github.com/schmittjoh/serializer/issues/713)
+- Impossible to use discriminator field. Why we need StaticPropertyMetadata ? [\#705](https://github.com/schmittjoh/serializer/issues/705)
+- Deserializing XMLList with Namespaces not \(always\) working as intended [\#695](https://github.com/schmittjoh/serializer/issues/695)
+
 ## [1.5.0-RC1](https://github.com/schmittjoh/serializer/tree/1.5.0-RC1) (2017-01-19)
 **Implemented enhancements:**
 
 - added support for xml-attributes as discriminators [\#692](https://github.com/schmittjoh/serializer/pull/692) ([twtinteractive](https://github.com/twtinteractive))
+- Added clearing previous libxml errors [\#688](https://github.com/schmittjoh/serializer/pull/688) ([zerkms](https://github.com/zerkms))
 - Prevent doctrine proxy loading for virtual types [\#684](https://github.com/schmittjoh/serializer/pull/684) ([goetas](https://github.com/goetas))
 - Implemented dynamic exclusion using symfony expression language [\#673](https://github.com/schmittjoh/serializer/pull/673) ([goetas](https://github.com/goetas))
 
@@ -26,6 +132,7 @@
 
 - Added doc reference for disabling discriminator [\#699](https://github.com/schmittjoh/serializer/pull/699) ([dragosprotung](https://github.com/dragosprotung))
 - Use GroupsExclusionStrategy::DEFAULT\_GROUP instead default group. [\#694](https://github.com/schmittjoh/serializer/pull/694) ([Aliance](https://github.com/Aliance))
+- A possible fix for the \#688 [\#689](https://github.com/schmittjoh/serializer/pull/689) ([zerkms](https://github.com/zerkms))
 - Improved Symfony 3.x compatibility  [\#682](https://github.com/schmittjoh/serializer/pull/682) ([goetas](https://github.com/goetas))
 
 ## [1.4.2](https://github.com/schmittjoh/serializer/tree/1.4.2) (2016-11-13)

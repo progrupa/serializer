@@ -16,15 +16,23 @@
  * limitations under the License.
  */
 
-namespace JMS\Serializer\Tests\Fixtures;
+namespace JMS\Serializer\Accessor;
 
-use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Metadata\PropertyMetadata;
 
-class ObjectWithEmptyHash
+/**
+ * @author Asmir Mustafic <goetas@gmail.com>
+ */
+class DefaultAccessorStrategy implements AccessorStrategyInterface
 {
-    /**
-     * @Serializer\Type("array<string,string>")
-     * @Serializer\XmlList(skipWhenEmpty=false)
-     */
-    private $hash = array();
+
+    public function getValue($object, PropertyMetadata $metadata)
+    {
+        return $metadata->getValue($object);
+    }
+
+    public function setValue($object, $value, PropertyMetadata $metadata)
+    {
+        $metadata->setValue($object, $value);
+    }
 }
