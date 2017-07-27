@@ -4,12 +4,16 @@
     "description": "Library for (de-)serializing data of any complexity; supports XML, JSON, and YAML.",
     "keywords": ["serialization", "deserialization", "json", "jaxb", "xml"],
     "homepage": "http://jmsyst.com/libs/serializer",
-    "license": "Apache2",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Johannes M. Schmitt",
             "email": "schmittjoh@gmail.com"
-        }
+        },
+        {
+            "name": "Asmir Mustafic",
+            "email": "goetas@gmail.com"
+        }        
     ],
     "require": {
         "php": ">=5.5.0",
@@ -49,9 +53,14 @@
             "JMS\\Serializer": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "JMS\\Serializer\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.6-dev"
+            "dev-master": "1.8-dev"
         }
     }
 }

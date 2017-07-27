@@ -19,13 +19,23 @@
 namespace JMS\Serializer\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use JMS\Serializer\Context;
 use JMS\Serializer\GraphNavigator;
 use JMS\Serializer\VisitorInterface;
-use Doctrine\Common\Collections\Collection;
 
 class ArrayCollectionHandler implements SubscribingHandlerInterface
 {
+    /**
+     * @var bool
+     */
+    private $initializeExcluded = true;
+
+    public function __construct($initializeExcluded = true)
+    {
+        $this->initializeExcluded = $initializeExcluded;
+    }
+
     public static function getSubscribingMethods()
     {
         $methods = array();
@@ -66,7 +76,16 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
 
         // We change the base type, and pass through possible parameters.
         $type['name'] = 'array';
-        $result = $visitor->visitArray($collection->toArray(), $type, $context);
+
+        $result = null;
+        if ($this->initializeExcluded === false) {
+            $exclusionStrategy = $context->getExclusionStrategy();
+            if ($exclusionStrategy !== null && $exclusionStrategy->shouldSkipClass($context->getMetadataFactory()->getMetadataForClass(get_class($collection)), $context)) {
+                $result = $visitor->visitArray([], $type, $context);
+            }
+        } else {
+            $result = $visitor->visitArray($collection->toArray(), $type, $context);
+        }
 
         //  Push ourselves back in, so we can be popped after leaving the handler
         $context->startVisiting($collection);

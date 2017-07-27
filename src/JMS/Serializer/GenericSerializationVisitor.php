@@ -18,10 +18,13 @@
 
 namespace JMS\Serializer;
 
-use JMS\Serializer\Metadata\ClassMetadata;
 use JMS\Serializer\Exception\InvalidArgumentException;
+use JMS\Serializer\Metadata\ClassMetadata;
 use JMS\Serializer\Metadata\PropertyMetadata;
 
+/**
+ * @deprecated
+ */
 abstract class GenericSerializationVisitor extends AbstractVisitor
 {
     private $navigator;
@@ -55,7 +58,7 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
             $this->root = $data;
         }
 
-        return (string) $data;
+        return (string)$data;
     }
 
     public function visitBoolean($data, array $type, Context $context)
@@ -64,7 +67,7 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
             $this->root = $data;
         }
 
-        return (boolean) $data;
+        return (boolean)$data;
     }
 
     public function visitInteger($data, array $type, Context $context)
@@ -73,7 +76,7 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
             $this->root = $data;
         }
 
-        return (int) $data;
+        return (int)$data;
     }
 
     public function visitDouble($data, array $type, Context $context)
@@ -82,7 +85,7 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
             $this->root = $data;
         }
 
-        return (float) $data;
+        return (float)$data;
     }
 
     /**
@@ -91,14 +94,18 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
      */
     public function visitArray($data, array $type, Context $context)
     {
+        $this->dataStack->push($data);
+
+        $isHash = isset($type['params'][1]);
+
         if (null === $this->root) {
-            $this->root = array();
+            $this->root = $isHash ? new \ArrayObject() : array();
             $rs = &$this->root;
         } else {
-            $rs = array();
+            $rs = $isHash ? new \ArrayObject() : array();
         }
 
-        $isList = isset($type['params'][0]) && ! isset($type['params'][1]);
+        $isList = isset($type['params'][0]) && !isset($type['params'][1]);
 
         foreach ($data as $k => $v) {
             $v = $this->navigator->accept($v, $this->getElementType($type), $context);
@@ -113,6 +120,8 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
                 $rs[$k] = $v;
             }
         }
+
+        $this->dataStack->pop();
 
         return $rs;
     }
