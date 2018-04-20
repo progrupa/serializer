@@ -80,7 +80,7 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
         $result = null;
         if ($this->initializeExcluded === false) {
             $exclusionStrategy = $context->getExclusionStrategy();
-            if ($exclusionStrategy !== null && $exclusionStrategy->shouldSkipClass($context->getMetadataFactory()->getMetadataForClass(get_class($collection)), $context)) {
+            if ($exclusionStrategy !== null && $exclusionStrategy->shouldSkipClass($context->getMetadataFactory()->getMetadataForClass(\get_class($collection)), $context)) {
                 $result = $visitor->visitArray([], $type, $context);
             }
         } else {

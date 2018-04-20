@@ -1,5 +1,114 @@
 # Change Log
 
+## [1.11.0](https://github.com/schmittjoh/serializer/tree/1.11.0) (2018-02-04)
+
+**Implemented enhancements:**
+
+- Deserialize xmlKeyValuePairs [\#868](https://github.com/schmittjoh/serializer/pull/868) ([goetas](https://github.com/goetas))
+- Add AdvancedNamingStrategyInterface [\#859](https://github.com/schmittjoh/serializer/pull/859) ([LeaklessGfy](https://github.com/LeaklessGfy))
+
+**Fixed bugs:**
+
+- Exception thrown for non-existant accessor to an excluded property [\#862](https://github.com/schmittjoh/serializer/issues/862)
+- Support non-namespaced lists in namespaced XML [\#851](https://github.com/schmittjoh/serializer/pull/851) ([bertterheide](https://github.com/bertterheide))
+
+**Closed issues:**
+
+- Context Group not working [\#865](https://github.com/schmittjoh/serializer/issues/865)
+- Not all virtual properties are serialized [\#864](https://github.com/schmittjoh/serializer/issues/864)
+- DeserializedName [\#857](https://github.com/schmittjoh/serializer/issues/857)
+- Annotation does not exist, or could not be auto-loaded. [\#855](https://github.com/schmittjoh/serializer/issues/855)
+- \[Question\] Serialization of primitive types [\#853](https://github.com/schmittjoh/serializer/issues/853)
+- Empty list when deserializing namespaced XML with children that are not namespaced [\#850](https://github.com/schmittjoh/serializer/issues/850)
+- XmlList\(skipWhenEmpty=true\) or @SkipWhenEmpty\(\) does not work [\#847](https://github.com/schmittjoh/serializer/issues/847)
+- DateHandler Timezone ignored on deserialization [\#457](https://github.com/schmittjoh/serializer/issues/457)
+
+**Merged pull requests:**
+
+- Drop HHVM support [\#869](https://github.com/schmittjoh/serializer/pull/869) ([goetas](https://github.com/goetas))
+- Allow excluded private properties to not have a getter acc… [\#863](https://github.com/schmittjoh/serializer/pull/863) ([0mars](https://github.com/0mars))
+- Solve php 7.2 deprecations [\#860](https://github.com/schmittjoh/serializer/pull/860) ([goetas](https://github.com/goetas))
+- Fixed issue where timezone is lost when creating DateTime from unix timestamp [\#835](https://github.com/schmittjoh/serializer/pull/835) ([goetas](https://github.com/goetas))
+
+## [1.10.0](https://github.com/schmittjoh/serializer/tree/1.10.0) (2017-11-30)
+**Implemented enhancements:**
+
+- support PSR-11 compatible DI containers [\#844](https://github.com/schmittjoh/serializer/pull/844) ([xabbuh](https://github.com/xabbuh))
+- Deserialize xmlKeyValuePairs [\#840](https://github.com/schmittjoh/serializer/pull/840) ([fdyckhoff](https://github.com/fdyckhoff))
+
+**Closed issues:**
+
+- Serialize using jsonSerialize\(\) if object implements JsonSerializable [\#846](https://github.com/schmittjoh/serializer/issues/846)
+- ExclusionStrategy backward compatibility break [\#843](https://github.com/schmittjoh/serializer/issues/843)
+- @MaxDepth jms/serializer-bundle 2.2 [\#842](https://github.com/schmittjoh/serializer/issues/842)
+
+## [1.9.2](https://github.com/schmittjoh/serializer/tree/1.9.2) (2017-11-22)
+**Fixed bugs:**
+
+- Missing ClassMetadata deserialization data [\#841](https://github.com/schmittjoh/serializer/pull/841) ([TristanMogwai](https://github.com/TristanMogwai))
+
+**Closed issues:**
+
+- DateTime format documentation [\#836](https://github.com/schmittjoh/serializer/issues/836)
+- Deserialization not working with camelCase [\#831](https://github.com/schmittjoh/serializer/issues/831)
+
+**Merged pull requests:**
+
+- Fix documentation syntax errors on available types [\#839](https://github.com/schmittjoh/serializer/pull/839) ([andy-morgan](https://github.com/andy-morgan))
+- Improve documentation about default DateTime format [\#838](https://github.com/schmittjoh/serializer/pull/838) ([enumag](https://github.com/enumag))
+
+## [1.9.1](https://github.com/schmittjoh/serializer/tree/1.9.1) (2017-10-27)
+**Fixed bugs:**
+
+- Dynamic exclusion strategy, Variable "object" is not valid [\#826](https://github.com/schmittjoh/serializer/issues/826)
+
+**Closed issues:**
+
+- Allow DateTime or Null [\#779](https://github.com/schmittjoh/serializer/issues/779)
+
+**Merged pull requests:**
+
+- Alow to use "object" var in expressions when deserializing [\#827](https://github.com/schmittjoh/serializer/pull/827) ([goetas](https://github.com/goetas))
+
+## [1.9.0](https://github.com/schmittjoh/serializer/tree/1.9.0) (2017-09-28)
+**Implemented enhancements:**
+
+- Doctrine LazyCriteriaCollection not supported [\#814](https://github.com/schmittjoh/serializer/issues/814)
+- Do not require the translator [\#824](https://github.com/schmittjoh/serializer/pull/824) ([goetas](https://github.com/goetas))
+- Added mapping for guid type [\#802](https://github.com/schmittjoh/serializer/pull/802) ([develth](https://github.com/develth))
+- Added translation domain to FormErrorHandler [\#783](https://github.com/schmittjoh/serializer/pull/783) ([prosalov](https://github.com/prosalov))
+
+**Fixed bugs:**
+
+-  Node no longer exists - Deserialize Error [\#817](https://github.com/schmittjoh/serializer/issues/817)
+- Serializer fails if there is no AnnotationDriver in the DriverChain instance [\#815](https://github.com/schmittjoh/serializer/issues/815)
+- Evaluate XML xsi:nil="1" to null  [\#799](https://github.com/schmittjoh/serializer/pull/799) ([Bouwdie](https://github.com/Bouwdie))
+
+**Closed issues:**
+
+- Empty array removed from XML serialization [\#816](https://github.com/schmittjoh/serializer/issues/816)
+- XML Discriminator tags don't work in YAML metadata [\#811](https://github.com/schmittjoh/serializer/issues/811)
+- Launching phpunit does not execute any test [\#809](https://github.com/schmittjoh/serializer/issues/809)
+- Add "bool" Annotation/Type [\#807](https://github.com/schmittjoh/serializer/issues/807)
+- Add support for overriding default annotation driver configuration [\#804](https://github.com/schmittjoh/serializer/issues/804)
+- Add description to PropertyMetadata? [\#800](https://github.com/schmittjoh/serializer/issues/800)
+
+**Merged pull requests:**
+
+- Workaround to avoid triggering simplexml warning [\#825](https://github.com/schmittjoh/serializer/pull/825) ([goetas](https://github.com/goetas))
+- Added null metadata driver [\#822](https://github.com/schmittjoh/serializer/pull/822) ([goetas](https://github.com/goetas))
+- Run Travis tests against modern PHP [\#819](https://github.com/schmittjoh/serializer/pull/819) ([Majkl578](https://github.com/Majkl578))
+- Added bool type alias [\#818](https://github.com/schmittjoh/serializer/pull/818) ([Majkl578](https://github.com/Majkl578))
+
+## [1.8.1](https://github.com/schmittjoh/serializer/tree/1.8.1) (2017-07-13)
+**Closed issues:**
+
+- Version 1.8 is breaking backwards compatibility [\#796](https://github.com/schmittjoh/serializer/issues/796)
+
+**Merged pull requests:**
+
+- Revert back to PSR-0 [\#797](https://github.com/schmittjoh/serializer/pull/797) ([goetas](https://github.com/goetas))
+
 ## [1.8.0](https://github.com/schmittjoh/serializer/tree/1.8.0) (2017-07-12)
 **Implemented enhancements:**
 

@@ -21,6 +21,7 @@ namespace JMS\Serializer;
 use JMS\Serializer\Exception\InvalidArgumentException;
 use JMS\Serializer\Metadata\ClassMetadata;
 use JMS\Serializer\Metadata\PropertyMetadata;
+use JMS\Serializer\Naming\AdvancedNamingStrategyInterface;
 
 class JsonSerializationVisitor extends GenericSerializationVisitor
 {
@@ -159,15 +160,19 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
 
         $v = $this->navigator->accept($v, $metadata->type, $context);
         if ((null === $v && $context->shouldSerializeNull() !== true)
-            || (true === $metadata->skipWhenEmpty && ($v instanceof \ArrayObject || is_array($v)) && 0 === count($v))
+            || (true === $metadata->skipWhenEmpty && ($v instanceof \ArrayObject || \is_array($v)) && 0 === count($v))
         ) {
             return;
         }
 
-        $k = $this->namingStrategy->translateName($metadata);
+        if ($this->namingStrategy instanceof AdvancedNamingStrategyInterface) {
+            $k = $this->namingStrategy->getPropertyName($metadata, $context);
+        } else {
+            $k = $this->namingStrategy->translateName($metadata);
+        }
 
         if ($metadata->inline) {
-            if (is_array($v) || ($v instanceof \ArrayObject)) {
+            if (\is_array($v) || ($v instanceof \ArrayObject)) {
                 $this->data = array_merge($this->data, (array) $v);
             }
         } else {
