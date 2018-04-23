@@ -74,6 +74,9 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
         // We change the base type, and pass through possible parameters.
         $type['name'] = 'array';
 
+        //  Pop ourselves out of the context not to be counted as a depth level
+        $context->stopVisiting($collection);
+
         if ($this->initializeExcluded === false) {
             $exclusionStrategy = $context->getExclusionStrategy();
             if ($exclusionStrategy !== null && $exclusionStrategy->shouldSkipClass($context->getMetadataFactory()->getMetadataForClass(\get_class($collection)), $context)) {
@@ -81,7 +84,11 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
             }
         }
 
-        return $visitor->visitArray($collection->toArray(), $type, $context);
+        $result = $visitor->visitArray($collection->toArray(), $type, $context);
+        //  Push ourselves back in, so we can be popped after leaving the handler
+        $context->startVisiting($collection);
+
+        return $result;
     }
 
     public function deserializeCollection(VisitorInterface $visitor, $data, array $type, Context $context)
